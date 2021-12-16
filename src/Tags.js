@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import * as TagService from"./services/TagServices";
+import * as TagService from "./services/TagServices";
 import "regenerator-runtime/runtime.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./style.css";
@@ -21,33 +21,29 @@ import {
   Button,
 } from "reactstrap";
 
-
-
-
-
 class Tags extends Component {
   constructor(props) {
     super(props);
-  this.state = {
-    tags: [],
-    
-    newTagData: {
-      title: "",
-      rating: "",
-    },
-    editTagData: {
-      id: "",
-      title: "",
-      rating: "",
-    },
-    newTagModal: false,
-    editTagModal: false,
-    confirmationModal: false,
-    toasterUpdated: false,
-    errorMess: "",
-  };
-  this.initialState = this.state;
-}
+    this.state = {
+      tags: [],
+
+      newTagData: {
+        title: "",
+        rating: "",
+      },
+      editTagData: {
+        id: "",
+        title: "",
+        rating: "",
+      },
+      newTagModal: false,
+      editTagModal: false,
+      confirmationModal: false,
+      toasterUpdated: false,
+      errorMess: "",
+    };
+    this.initialState = this.state;
+  }
   componentWillMount() {
     // React Lifecycle
     this._refreshTags(); // Call back Method
@@ -68,9 +64,6 @@ class Tags extends Component {
       confirmationModal: !this.state.confirmationModal,
     });
   }
-
-
-
 
   //VALIDATION
   ValidatedTagForm = () => {
@@ -94,28 +87,23 @@ class Tags extends Component {
     return true;
   };
 
-
-
-
-
   //SERVICES
   async addTag() {
     const response = await TagService.addTag(this.state.newTagData);
-        let { tags } = this.state;
-        tags.push(response);
+    let { tags } = this.state;
+    tags.push(response);
 
-        this.setState({
-          tags,
-          newTagModal: false,
-          newTagData: {
-            title: "",
-            rating: "",
-          },
-        });
-        toast.success("Added Successfully!");
-      
+    this.setState({
+      tags,
+      newTagModal: false,
+      newTagData: {
+        title: "",
+        rating: "",
+      },
+    });
+    toast.success("Added Successfully!");
   }
- 
+
   submitevent(newTagData) {
     const isvalid = this.ValidatedTagForm(this);
     if (isvalid === true) {
@@ -123,17 +111,20 @@ class Tags extends Component {
     }
   }
   async updateTag() {
-    const response = await TagService.updateTag(this.state.editTagData.id,this.state.editTagData.title,this.state.editTagData.rating);
+    const response = await TagService.updateTag(
+      this.state.editTagData.id,
+      this.state.editTagData.title,
+      this.state.editTagData.rating
+    );
     let { tags } = this.state;
-     tags.push(response);
-        this._refreshTags();
+    tags.push(response);
+    this._refreshTags();
 
-        this.setState({
-          editTagModal: false,
-          editTagData: { id: "", title: "", rating: "" },
-        });
-        toast("Updated Successfully!");
-      
+    this.setState({
+      editTagModal: false,
+      editTagData: { id: "", title: "", rating: "" },
+    });
+    toast("Updated Successfully!");
   }
   editTag(id, title, rating) {
     this.setState({
@@ -148,8 +139,8 @@ class Tags extends Component {
     });
   }
   async deleteTagModal(id) {
-    const response= await TagService.deleteTagModal(id);
-    
+    const response = await TagService.deleteTagModal(id);
+
     this.setState({
       confirmationModal: !this.state.confirmationModal,
     });
@@ -157,15 +148,11 @@ class Tags extends Component {
     toast.error("Deleted Successfully!");
   }
   async _refreshTags() {
-    const response= await TagService._refreshTags();
-      this.setState({
-        tags: response,
-      });
-    
+    const response = await TagService._refreshTags();
+    this.setState({
+      tags: response,
+    });
   }
-
-
-
 
   render() {
     let tags = this.state.tags.map((tagtag) => {
@@ -209,47 +196,48 @@ class Tags extends Component {
             Add a new tag
           </ModalHeader>
           <ModalBody>
-            
-          <form>
+            <form>
+              <FormGroup>
+                <Label for="title">Title</Label>
+                <Input
+                  id="title"
+                  value={this.state.newTagData.title}
+                  onChange={(e) => {
+                    let { newTagData } = this.state;
 
-            <FormGroup>
-              <Label for="title">Title</Label>
-              <Input
-                id="title"
-                value={this.state.newTagData.title}
-                onChange={(e) => {
-                  let { newTagData } = this.state;
+                    newTagData.title = e.target.value;
 
-                  newTagData.title = e.target.value;
+                    this.setState({ newTagData, errorMess: "" });
+                  }}
+                />
+                {this.state.errorMess && (
+                  <p className="error"> {this.state.errorMess} </p>
+                )}
+              </FormGroup>
+              <FormGroup>
+                <Label for="rating">Rating</Label>
+                <Input
+                  id="rating"
+                  value={this.state.newTagData.rating}
+                  onChange={(e) => {
+                    let { newTagData } = this.state;
 
-                  this.setState({ newTagData,errorMess:"" });
-                }}
-              />{this.state.errorMess && (
-                <p className="error"> {this.state.errorMess} </p>
-              )}
-            </FormGroup>
-            <FormGroup>
-              <Label for="rating">Rating</Label>
-              <Input
-                id="rating"
-                value={this.state.newTagData.rating}
-                onChange={(e) => {
-                  let { newTagData } = this.state;
+                    newTagData.rating = e.target.value;
 
-                  newTagData.rating = e.target.value;
-
-                  this.setState({ newTagData });
-                }}
-              />{this.state.errorMess && (
-                <p className="error"> {this.state.errorMess} </p>
-              )}
-            </FormGroup>
+                    this.setState({ newTagData });
+                  }}
+                />
+                {this.state.errorMess && (
+                  <p className="error"> {this.state.errorMess} </p>
+                )}
+              </FormGroup>
             </form>
           </ModalBody>
           <ModalFooter>
-            <Button 
-            color="primary" 
-            onClick={this.submitevent.bind(this, this.state.newTagData)}>
+            <Button
+              color="primary"
+              onClick={this.submitevent.bind(this, this.state.newTagData)}
+            >
               Add Tags
             </Button>{" "}
             <Button

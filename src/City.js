@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-import * as CityService from "./services/CityServices"
+// import axios from "axios";
+import * as CityService from "./services/CityServices";
 import "regenerator-runtime/runtime.js";
+// import useForm from "./useForm";
+
 import "./style.css";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer, toast } from "react-toastify";
 import {
   Input,
   FormGroup,
@@ -16,7 +18,7 @@ import {
   Button,
 } from "reactstrap";
 
-
+import { ToastContainer, toast } from "react-toastify";
 
 class City extends Component {
   constructor(props) {
@@ -25,23 +27,28 @@ class City extends Component {
       cities: [],
 
       newCityData: {
-        title: "",
-        rating: "",
+        cityname: "",
+        pincode: "",
+        // value: "",
       },
       editCityData: {
         id: "",
-        title: "",
-        rating: "",
+        cityname: "",
+        pincode: "",
       },
       newCityModal: false,
       editCityModal: false,
       confirmationModal: false,
       toasterUpdated: false,
       errorMess: "",
+      errorMax: "",
+      errorMin: "",
+      oninvalid: "",
     };
     this.initialState = this.state;
+    // this.ValidatedCityForm = this.ValidatedCityForm.bind(this);
   }
-  
+  //const [errorMessage, setErrorMessage] = useState("");
   componentWillMount() {
     // React Lifecycle
     this._refreshcities(); // Call back Method
@@ -61,55 +68,52 @@ class City extends Component {
       confirmationModal: !this.state.confirmationModal,
     });
   }
+  async addCity() {
+    const response = await CityService.addCity(this.state.newCityData);
+    let { cities } = this.state;
+    cities.push(response);
 
+    this.setState({
+      cities,
+      newCityModal: false,
+      newCityData: {
+        cityname: "",
+        pincode: "",
+      },
+    });
+    toast.success("Added Successfully!");
+  }
 
-
-
-
-//VALIDATION
-  ValidatedCityForm = () => {
+  ValidatedCityForm = (e) => {
+    if (this.state.newCityData.cityname.length > 15) {
+      this.setState({ value: e.target.value });
+      let errmax = `Max length is 15`;
+      this.setState({ errorMax: errmax });
+    }
     if (
-      
-      this.state.newCityData.title === undefined ||
-      this.state.newCityData.title === ""
+      this.state.newCityData.cityname === undefined ||
+      this.state.newCityData.cityname === ""
     ) {
       let errmsg = "This Field is required";
       this.setState({ errorMess: errmsg });
       return false;
     }
     if (
-      this.state.newCityData.rating === undefined ||
-      this.state.newCityData.rating === ""
+      this.state.newCityData.pincode === undefined ||
+      this.state.newCityData.pincode === ""
     ) {
       let errmsg = "This Field is required";
       this.setState({ errorMess: errmsg });
       return false;
     }
+
+    // const re = /^[0-9\b]+$/;
+    // if (e.target.value === "" || re.test(e.target.value)) {
+    //   this.setState({ value: e.target.value });
+    // }
 
     return true;
   };
-
-
-
-
-
-  //SERVICES
-  async addCity() {
-    const response = await CityService.addCity(this.state.newCityData);
-        let { cities } = this.state;
-        cities.push(response);
-
-        this.setState({
-          cities,
-          newCityModal: false,
-          newCityData: {
-            title: "",
-            rating: "",
-          },
-        });
-        toast.success("Added Successfully!");
-      
-  }
 
   submitevent(newCityData) {
     const isvalid = this.ValidatedCityForm(this);
@@ -119,21 +123,24 @@ class City extends Component {
   }
 
   async updateCity() {
-    const response = await CityService.updateCity(this.state.editCityData.id,this.state.editCityData.title,this.state.editCityData.rating);
+    const response = await CityService.updateCity(
+      this.state.editCityData.id,
+      this.state.editCityData.cityname,
+      this.state.editCityData.pincode
+    );
     let { cities } = this.state;
-     cities.push(response);
-        this._refreshcities();
+    cities.push(response);
+    this._refreshcities();
 
-        this.setState({
-          editCityModal: false,
-          editCityData: { id: "", title: "", rating: "" },
-        });
-        toast("Updated Successfully!");
-      
-  }
-  editCity(id, title, rating) {
     this.setState({
-      editCityData: { id, title, rating },
+      editCityModal: false,
+      editCityData: { id: "", cityname: "", pincode: "" },
+    });
+    toast("Updated Successfully!");
+  }
+  editCity(id, cityname, pincode) {
+    this.setState({
+      editCityData: { id, cityname, pincode },
       editCityModal: !this.state.editCityModal,
     });
   }
@@ -144,8 +151,8 @@ class City extends Component {
     });
   }
   async deleteCityModal(id) {
-    const response= await CityService.deleteCityModal(id);
-    
+    const response = await CityService.deleteCityModal(id);
+
     this.setState({
       confirmationModal: !this.state.confirmationModal,
     });
@@ -153,24 +160,19 @@ class City extends Component {
     toast.error("Deleted Successfully!");
   }
   async _refreshcities() {
-    const response= await CityService.refreshcities();
-      this.setState({
-        cities: response,
-      });
-    
+    const response = await CityService.refreshcities();
+    this.setState({
+      cities: response,
+    });
   }
-
-
-
-
 
   render() {
     let cities = this.state.cities.map((citycity) => {
       return (
         <tr key={citycity.id}>
           <td>{citycity.id}</td>
-          <td>{citycity.title}</td>
-          <td>{citycity.rating}</td>
+          <td>{citycity.cityname}</td>
+          <td>{citycity.pincode}</td>
           <td>
             <Button
               color="success"
@@ -179,8 +181,8 @@ class City extends Component {
               onClick={this.editCity.bind(
                 this,
                 citycity.id,
-                citycity.title,
-                citycity.rating
+                citycity.cityname,
+                citycity.pincode
               )}
             >
               Edit
@@ -209,29 +211,50 @@ class City extends Component {
           <ModalBody>
             <form>
               <FormGroup>
-                <Label for="title">Title</Label>
+                <Label for="cityname">CityName</Label>
                 <Input
-                  id="title"
-                  value={this.state.newCityData.title}
+                  type="text"
+                  minlength="3"
+                  placeholden="City..max 15 char"
+                  id="cityname"
+                  value={this.state.newCityData.cityname}
                   onChange={(e) => {
                     let { newCityData } = this.state;
-                    newCityData.title = e.target.value;
+                    newCityData.cityname = e.target.value;
                     this.setState({ newCityData, errorMess: "" });
                   }}
                 />
                 {this.state.errorMess && (
                   <p className="error"> {this.state.errorMess} </p>
                 )}
+                {this.state.errorMax && (
+                  <p className="error"> {this.state.errorMax} </p>
+                )}
+                {this.state.errorMin && (
+                  <p className="error"> {this.state.errorMin} </p>
+                )}
+                {this.state.newCityData.cityname.length > 15 && (
+                  <p className="error"> {"Max length is 15"} </p>
+                )}
+
+                {/* if (this.state.newCityData.cityname.value.length > 15) {
+      let errmax = `Max length is 15`;
+      this.setState({ errorMax: errmax });
+    } */}
               </FormGroup>
               <FormGroup>
-                <Label for="rating">Rating</Label>
+                <Label for="pincode">Pincode</Label>
                 <Input
-                  id="rating"
-                  value={this.state.newCityData.rating}
+                  type="number"
+                  minlength="3"
+                  maxlength="15"
+                  placeholden="pincode..max 15 char"
+                  id="pincode"
+                  value={this.state.newCityData.pincode}
                   onChange={(e) => {
                     let { newCityData } = this.state;
 
-                    newCityData.rating = e.target.value;
+                    newCityData.pincode = e.target.value;
 
                     this.setState({ newCityData, errorMess: "" });
                   }}
@@ -246,6 +269,7 @@ class City extends Component {
             <Button
               type="submit"
               color="primary"
+              // value={this.state.value}
               onClick={this.submitevent.bind(this, this.state.newCityData)}
             >
               Add City
@@ -268,34 +292,40 @@ class City extends Component {
           </ModalHeader>
           <ModalBody>
             <FormGroup>
-              <Label for="title">Title</Label>
+              <Label for="cityname">cityname</Label>
               <Input
-                id="title"
-                value={this.state.editCityData.title}
+                pattern="[a-zA-Z]"
+                oninvalid="setCustomValidity('Please enter on alphabets only. ')"
+                id="cityname"
+                value={this.state.editCityData.cityname}
                 onChange={(e) => {
                   let { editCityData } = this.state;
 
-                  editCityData.title = e.target.value;
+                  editCityData.cityname = e.target.value;
 
                   this.setState({ editCityData, errorMess: "" });
                 }}
               />
-              
+              {/* {this.state.errorMess && (
+                <p className="error"> {this.state.errorMess} </p>
+              )} */}
             </FormGroup>
             <FormGroup>
-              <Label for="rating">Rating</Label>
+              <Label for="pincode">pincode</Label>
               <Input
-                id="rating"
-                value={this.state.editCityData.rating}
+                id="pincode"
+                value={this.state.editCityData.pincode}
                 onChange={(e) => {
                   let { editCityData } = this.state;
 
-                  editCityData.rating = e.target.value;
+                  editCityData.pincode = e.target.value;
 
                   this.setState({ editCityData, errorMess: "" });
                 }}
               />
-              
+              {/* {this.state.errorMess && (
+                <p className="error"> {this.state.errorMess} </p>
+              )} */}
             </FormGroup>
           </ModalBody>
           <ModalFooter>
@@ -346,8 +376,8 @@ class City extends Component {
           <thead>
             <tr>
               <th>#</th>
-              <th>Title</th>
-              <th>Rating</th>
+              <th>cityname</th>
+              <th>pincode</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -355,7 +385,8 @@ class City extends Component {
           <tbody>{cities}</tbody>
         </Table>
         <ToastContainer />
-       </div>
+        {/* <Note /> */}
+      </div>
     );
   }
 }

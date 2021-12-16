@@ -1,0 +1,101 @@
+{
+  "tags": [
+    {
+      "title": "Maanadu",
+      "rating": "9.2",
+      "id": 1
+    },
+    {
+      "title": "Maanadu",
+      "rating": "9.0",
+      "id": 2
+    },
+    {
+      "title": "Maanadu",
+      "rating": "9.0",
+      "id": 3
+    },
+    {
+      "title": "Enemy",
+      "rating": "7.2",
+      "id": 4
+    },
+    {
+      "title": "Beast",
+      "rating": "9.0",
+      "id": 5
+    },
+    {
+      "title": "Valimai",
+      "rating": "8.8",
+      "id": 6
+    },
+    {
+      "title": "Bachelor",
+      "rating": "6.8",
+      "id": 7
+    },
+    {
+      "title": "Doctor",
+      "rating": "8.1",
+      "id": 8
+    },
+    {
+      "title": "Lift",
+      "rating": "6.0",
+      "id": 9
+    },
+    {
+      "title": "Lift",
+      "rating": "6.0",
+      "id": 10
+    }
+  ],
+  "cities": [
+    {
+      "cityname": "Coimbatore",
+      "pincode": "641001",
+      "id": 1
+    },
+    {
+      "cityname": "Salem",
+      "pincode": "641254",
+      "id": 2
+    },
+    {
+      "cityname": "Hosur",
+      "pincode": "6411117",
+      "id": 3
+    },
+    {
+      "cityname": "Chennai",
+      "pincode": "645125",
+      "id": 4
+    },
+    {
+      "cityname": "Madurai",
+      "pincode": "641987",
+      "id": 5
+    },
+    {
+      "cityname": "Ooty",
+      "pincode": "641987",
+      "id": 6
+    },
+    {
+      "cityname": "Delhi",
+      "pincode": "6413322",
+      "id": 7
+    },
+    {
+      "cityname": "Mumbai",
+      "pincode": "6410098",
+      "id": 8
+    },
+    {
+      "cityname": "Goa",
+      "pincode": "6410000",
+      "id": 9
+    }
+  ]
+}
